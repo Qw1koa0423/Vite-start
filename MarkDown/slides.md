@@ -67,13 +67,91 @@ layout: bullets
 
 </div>
 
+
+
+<div v-click class='overflow-y-scroll max-h-[400px] '>
+
 ### 项目可能具备哪些功能
 
-- typescript: 如果遇到ts文件我们需要使用tsc将typescript代码转换为js代码   
+<div v-click='2' class='group'>
+
+-  typescript: 如果遇到ts文件我们需要使用tsc将typescript代码转换为js代码   
+<div class='hidden group-hover:block'>
+
+```typescript
+//index.ts
+interface IPerson {
+  name: string
+}
+const person: IPerson = {
+  name: 'John',
+}
+//转化为=>
+var person = {
+    name: 'John'
+};
+```
+</div>
+
+</div>
+<div class='group'>
+
 - React/Vue: 安装react-compiler / vue-complier, 将我们写的jsx文件或者.vue文件转换为render函数
+<div class='hidden group-hover:block'>
+
+```javascript
+//APP.jsx
+
+export default function App() {
+  return <div>Hello World</div>
+}
+//转化为=>
+ReactDOM.createRoot(document.getElementById('root') ).render( <App />)
+```
+</div>
+</div>
+<div class='group'>
+
 - less/sass/postcss/component-style: 我们又需要安装less-loader, sass-loader等一系列编译工具
+<div class='hidden group-hover:block'>
+
+```less
+//style.less
+.wrapper {
+  .content {
+    display: block;
+  }
+}
+//转化为=>
+.wrapper .content{
+  display: block;   
+}
+```
+</div>
+</div>
+
+
 - 语法降级: babel ---> 将es的新语法转换旧版浏览器可以接受的语法
+
+<div class='group'>
+
 - 体积优化: uglifyjs ---> 将我们的代码进行压缩变成体积更小性能更高的文件
+<div class='hidden group-hover:block'>
+
+```javascript
+
+//index.js
+function abcdefg(){
+    return <div>hello world</div>
+}
+//转换为=>
+function a()={
+    return <div>hello world</div>
+}
+```
+</div>
+</div>
+
 - ……
 
 我们只需要关心我们写的代码
@@ -101,6 +179,8 @@ layout: bullets
 - rollup
 - grunt
 - gulp
+
+</div>
 
 <!--
 
@@ -158,12 +238,12 @@ layout: bullets
 
 </div>
 
-<div  class='overflow-y-scroll h-[400px]   '>
+
 
 <img   src='/01.png' />
 
+### webpack支持多种模块化
 
-webpack支持多种模块化
 ```js
 // index.js
 // 这一段代码最终会到浏览器里去运行
@@ -178,12 +258,8 @@ const Vue = webpack_require("vue");
 
 ```
 
-<img   src='/02.png'   />
-
-<img   src='/03.png' />
 
 
-</div>
 
 
 
