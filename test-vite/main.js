@@ -1,2 +1,6 @@
 import { count } from "./counter.js"
-console.log('count')
+import _ from 'lodash'
+import lodashEs from 'lodash-es'
+console.log('count', count)
+console.log('lodash', _)
+// console.log('lodash-es', lodashEs)
