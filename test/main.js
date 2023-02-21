@@ -1,2 +1,2 @@
 import { count } from "./index.js"
-console.log(count)
+console.log('count', count)

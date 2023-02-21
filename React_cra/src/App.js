@@ -1,7 +1,7 @@
 import logo from './logo.svg'
 import './App.css'
-import _ from 'lodash'
 import { useEffect } from 'react'
+import _ from 'lodash'
 const lodash = require('lodash')
 function App () {
   useEffect(() => {

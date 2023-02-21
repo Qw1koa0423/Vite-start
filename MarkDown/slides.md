@@ -15,8 +15,8 @@ title: Vite
 
 <!--
 Vite: 思维比较前卫而且先进的构建工具 他确实解决了一些webpack解决不了的问题。
-目前使用vue-cli去构建vue项目的时候你要写的vue.config.js不再是webpack的配置而是vite的配置(目前只基于浏览器项目)
 Vite是Vue团队的官方出品
+目前使用vue-cli去构建vue项目的时候你要写的vue.config.js不再是webpack的配置而是vite的配置(目前只基于浏览器项目)
 Vite也支持直接构建react项目, 也支持构建angular项目, svelte项目也支持构建
 -->
 
@@ -56,7 +56,6 @@ layout: bullets
 ---
 layout: bullets
 clicks: 11
-
 ---
 
 <img v-motion-pop-visible  src="/logo.png" style="zoom:10%;" />
@@ -67,7 +66,7 @@ clicks: 11
 
 </div>
 
-<div  class='overflow-y-scroll max-h-[400px] '>
+<div  class='overflow-y-scroll max-h-[425px] '>
 <div v-click-hide='7'>
 
 <div v-click='1'>
@@ -210,21 +209,24 @@ import React from "React"; // es6 module
 </div>
 </div>
 
-
 <!--
 想要知道什么是构建工具首先要知道一个项目可能具备哪些功能
-
 1.TS
 2.React/vue
 3.less/sass
 4.babel
 5.体积优化
+我们开发的时候，每次修改代码，都需要tsc等等，很麻烦，如果这时候有一个东西，能帮我们做，我们只需要关注我们写的代码，这个东西就叫构建工具
+那么一个构建工具到底承担了哪些工作
+首先是模块化支持，我这里创建了一个原生的项目。（打开项目，启动看一下count）
+
+总结一下什么是构建工具。
+当前主流的构建工具webpack和vite用的比较多的，vite在打包生产的时候会用到rollup这个库
 
 -->
 
 ---
 layout: bullets
-
 ---
 
 <img v-motion-pop-visible  src="/logo.png" style="zoom:10%;" />
@@ -234,7 +236,7 @@ layout: bullets
 ## vite相较于webpack的优势？
 
 </div>
-<div  class='overflow-y-scroll max-h-[400px] '>
+<div  class='overflow-y-scroll max-h-[425px] '>
 <div v-click-hide='3'>
 <div v-click='1'>
 
@@ -267,35 +269,20 @@ const Vue = webpack_require("vue");
 </div>
 </div>
 
-
-
 <!--
 vite 背靠vue团队  解决了webpack解决不了的问题   
-
 援引官方文档的话
-
-起因: 我们的项目越大 =》工具（webpack）所要处理的js代码就越多 【跟webpack的一个构建过程（工作流程）有关系】，如果了解过webpack，webpack支持多种模块化，我这里有两种模块化代码。
-webpack的编译原理, AST 抽象语法分析的工具 分析出你写的这个js文件有哪些导入和导出操作
-
-前端没办法改 构建工具运行在服务端，  yarn start 后构建一个服务器，把你的文件改了，换成他自己的一套
-
-因为webpack支持多种模块化, 他一开始必须要统一模块化代码, 所以意味着他需要将所有的依赖全部读一遍
-
-造成的结果: 构建工具需要很长时间才能启动开发服务器 (启动开发服务=>项目跑起来）
-
-启动一个项目要很长时间  很难受  这是webpack最大的一个缺陷
-
-这个改不了，改了就不支持多种模块化
-
-vite会不会直接把webpack干翻, vite是基于es modules的, 侧重点不一样,项目不一定只是跑在浏览器端的， webpack更多的关注兼容性, 而vite关注浏览器端的开发体验,vite不需要把依赖都读一遍，所以不需要很多时间启动开发服务器
-
-我们来看下面两张图，vite是直接开启开发服务器，同时把entry（入口文件）去加载，按需加载模块，webpack是把所有依赖都解析完并且打包，再运行起来，还是那句话，我们的项目越大，启动的时间就越长，我们来到vite这边，他不管项目多大，多臃肿，他都会直接启动开发服务器，来进行按需加载，这边有灰色的，比如说你的路由，你说home页面和一个about页面，你没用到about页面的代码，这个页面就不会被加载，具体他是怎么去实现这一套流程的我们在后面vite的编译原理和esmodule的了解中知道，我们现在只要知道他的启动要比webpack要快，是因为他采取先开启开发服务器，并且不会一次性将所以的依赖去读完，但是webpack必须要把他解析完。 
-
+起因: 我们的项目越大 =》工具（webpack）所要处理的js代码就越多 【跟webpack的一个构建过程（工作流程）有关系】，我了解过一点点webpack，他是支持多种模块化的。
+我这里有两种模块化代码。
+webpack会把这两种代码转换成一种形式,靠的是 AST 抽象语法分析的工具 分析出你写的这个js文件有哪些导入和导出操作，因为Js文件前端是没办法改的，服务端可以去改，构建工具运行在服务端，我们执行yarn start 命令后会构建一个服务器，把你的文件改了，换成他自己的一套。
+因为webpack支持多种模块化, 他一开始必须要统一模块化代码, 所以意味着他需要将所有的依赖全部读一遍。
+造成的结果: 构建工具需要很长时间才能启动开发服务器 (启动开发服务=>项目跑起来）这是webpack最大的一个缺陷。
+vite会不会直接把webpack干翻, vite是基于es modules的, 侧重点不一样,项目不一定只是跑在浏览器端的， webpack更多的关注兼容性, 而vite关注浏览器端的开发体验,vite不需要把依赖都读一遍，所以不需要很多时间启动开发服务器。
+我们来看下面两张图，vite是直接开启开发服务器，同时把entry（入口文件）去加载，按需加载模块，webpack是把所有依赖都解析完并且打包，再运行起来，还是那句话，我们的项目越大，启动的时间就越长，我们来到vite这边，他不管项目多大，多臃肿，他都会直接启动开发服务器，来进行按需加载，这边有灰色的，比如说你的路由，你说home页面和一个about页面，你没用到about页面的代码，这个页面就不会被加载，具体他是怎么去实现这一套流程的我们在后面说，我们现在只要知道他的启动要比webpack要快，是因为他采取先开启开发服务器，并且不会一次性将所以的依赖去读完，但是webpack必须要把他解析完。
 -->
 
 ---
 layout: bullets
-
 ---
 
 <img v-motion-pop-visible  src="/logo.png" style="zoom:10%;" />
@@ -306,7 +293,7 @@ layout: bullets
 
 </div>
 
-<div  class='overflow-y-scroll max-h-[400px] '>
+<div  class='overflow-y-scroll max-h-[425px] '>
 <div v-click='1'>
 
 ### vite脚手架和vite
@@ -335,35 +322,24 @@ layout: bullets
 </div>
 </div>
 </div>
+
 <!--
-在正式讲之前要先搞清楚vite脚手架和vite，官方文档直接用npm create 和yarn create
-
+在正式讲之前先搞清楚vite脚手架和vite，我们先打开官方文档。
+可以看到官网这里直接用npm create 和yarn create
 他其实帮我们搭建的是一套预设的工程，包括vue-cli,cra。
+比如我们敲了yarn create vite
 如果光看官网的开始的话可能会以为yarn create构建项目也是vite在做的事情，但是他其实是create vite在做的事情，而不是vite在做的事情，create-vite和vite的关系实际上是create-vite内置了vite
-
 就跟我们cra内置了webpack一样，但是你不能说使用cra创建的项目是webpack去做的事情，所以cra和webpack的关系就等同于create-vite和vite的关系。
-所以我们先不用create-vite这个，我们先使用vite
-
 再说一下这个预设：举个现实中的例子，比如我们买房，毛坯房相当于我们的工程，  然后我们要买沙发做装修等等，这些都是要自己去做的，但是你觉得麻烦，你可以直接买开发商弄好的精装修的房，回到这里这时候这个开发商就相当于cra，给我们提供已经精装修的模板。
-
-假如我们自己去搭建一个项目：我们首先要下载vite，reatc，post-css，less，现在create-vite是直接给你一套预设，帮你把这些都下载好了，并且做好了最佳实践，所以我们开发的时候需要自定义的东西很少。
-
-我们现在找一个目录新建一个文件夹
-
+假如我们自己去搭建一个项目：我们首先要下载vite，react，post-css，less，现在create-vite是直接给你一套预设，帮你把这些都下载好了，并且做好了最佳实践，所以我们开发的时候需要自定义的东西很少。
+所以vite是开箱即用的工具，默认情况下，而vite会自动帮你从node_modules引入，这个node_module也是目前的最佳实践。
 既然我们现在的最佳实践就是node_modules, 那为什么es官方在我们导入非绝对路径和非相对路径的资源的时候不默认帮我们 搜寻node_modules呢？
-
-假如浏览器去做了这个事情，loadsh会被发现，lodash可能又引入了别的库，其他的库又引入了其他的库，那浏览器不知道要发多少请求才能加载下来。
-
-我们看一下浏览器是怎么加载模块的（通过http加载），非常消耗网络资源的性能，common是走这道流程的，以为common运行在服务端，他不是通过网络请求去找的，而是通过读文件去找的。
-
-因为我们的lodash没法加载出来，我们直接引入vite，yarn add vite 这里是有说法的，vite是做代码处理的，把我们的代码构建完成后生成浏览器认识的代码运行，所以我们只在开发环境下用，使用-D
-
-修改一下script，yarn dev 运行一下项目，可以打印出来。不需要我们做任何的处理。
+假如浏览器去做了这个事情，loadsh会被发现，lodash可能又引入了别的库，其他的库又引入了更多的库，那浏览器不知道要发多少请求才能加载下来。
+我们看一下浏览器是怎么加载模块的（通过http加载），非常消耗网络资源的性能，但是commonjs是走这道流程的，因为为commonjs运行在服务端，他不是通过网络请求去找的，而是通过读文件去找的。
 -->
 
 ---
 layout: bullets
-
 ---
 
 <img v-motion-pop-visible  src="/logo.png" style="zoom:10%;" />
@@ -394,9 +370,14 @@ yarn add vite -D
 yarn dev
 ```
 
+<!--
+我们现在找一个目录新建一个文件夹
+因为我们的lodash没法加载出来，我们直接引入vite，应该是yarn add vite 这里是有说法的，vite是做代码处理的，把我们的代码构建完成后生成浏览器认识的代码运行，所以我们只在开发环境下用，使用-D
+修改一下script，yarn dev 运行一下项目，可以打印出来。不需要我们做任何的处理。
+-->
+
 ---
 layout: bullets
-
 ---
 
 <img v-motion-pop-visible  src="/logo.png" style="zoom:10%;" />
@@ -406,7 +387,7 @@ layout: bullets
 ## vite的编译结果分析
 
 </div>
-<div  class='overflow-y-scroll max-h-[400px] '>
+<div  class='overflow-y-scroll max-h-[425px] '>
 
 ```js
 import _ from 'lodash'
@@ -462,24 +443,21 @@ export default defineConfig({
 })
 ```
 </div>
+
 <!--
-1.处理过程中如果看到有非绝对路径或者相对路径的引用，他会尝试开启路径补全，直接看一下服务。
+1.其实vite处理过程中如果看到有非绝对路径或者相对路径的引用，他会尝试开启路径补全，（直接看一下服务，打开浏览器）。
 2.就是说他会看当前目录下的node_modules有没有对应的依赖，没有的话就会找当前目录的父级目录一直找到根目录为止。
-3.打包之后浏览器不认识这个，这个时候他补全会不会变成这样，如果变成这样浏览器找不到因为绝对路径不对了。这里我们区分一下生产和开发。
-4.生产环境跟webpack一样兼容特别多的场景，不止支持esmodule，也支持commonjs规范，vite在开发环境不会这么去做一个是缓存问题，实际上vite在考虑另外一个问题的时候就顺便把这个问题解决了
-5.module.export 导入第三方库的时候vite不认识，有的包是以commonjs规范导出的，这种情况是库的作者去决定的，vite不能去约束作者，他就项链一个办法叫依赖预构建。
+3.但是我们假设node_modules不在根目录，user下面有个node_modules,打包这之后路径是这样的，打浏览器不认识这个，这个时候他补全会不会变成这样，如果变成这样浏览器找不到因为绝对路径不对了。
+4.这里我们区分一下生产和开发。开发环境执行yarn dev，生产环境跟webpack一样兼容特别多的场景，不止支持esmodule，也支持commonjs规范，vite在开发环境不会这么去做一个是缓存问题，实际上vite在考虑另外一个问题的时候就顺便把这个问题解决了
+5.就是我们现在是一个react项目，react中有的module.export 导入第三方库，vite不认识，有的包是以commonjs规范导出的，这种情况是库的作者去决定的，vite不能去约束作者，他就想到一个办法叫依赖预构建。
 6.第二个解决的是路径问题，他把所有的包都导入.vite目录后就不用去管我是绝对路径还是相对路径
 7.假设lodash又依赖了其他模块，并且都是用export导出的，这个时候lodash又要请求他的依赖，又会造成网络传输性能问题。所以打包以后转换成esmodule规范以后同时对esmodule规范各个模块统一集成。
 8.安装lodash-es，lodash es的形式。看一下全是esmodule形式，起一个服务看一下跟我们看的不一样，vite把他重写了，把他变成一个函数了。vite发现这个语句之后，他把export { default as a  } from "./a.js"不要了，直接变成函数，那么我们只剩index一个模块了。
 9.认识vite第一个配置，新建一个vite.config.js===webpack.config.js,传入参数，启动，看lodash跟我们看的完全一样，看esmodule加载了很多东西出来，所以依赖预构建是vite最重要的。
-
-
 -->
-
 
 ---
 layout: bullets
-
 ---
 
 <img v-motion-pop-visible  src="/logo.png" style="zoom:10%;" />
@@ -489,10 +467,164 @@ layout: bullets
 ## vite的配置文件
 
 </div>
+<div  class='overflow-y-scroll max-h-[425px] '>
+<div v-click-hide='2' >
+<div v-click='1' >
+
+### 语法提示
+```js
+import { defineConfig } from 'vite'
+export default defineConfig({})
+```
+</div>
+</div>
+<div v-click-hide='3' >
+<div v-click='2'>
+
+### 环境处理
+```html
+- webpack.dev.config =>vite.dev.config
+- webpack.prod.config=>vite.prod.config
+- webpack.base.config=>vite.base.config
+```
+```js
+import { defineConfig } from 'vite'
+import viteBaseConfig from './vite.base.config'
+import viteDevConfig from './vite.dev.config'
+import viteProdConfig from './vite.prod.config'
+
+export default defineConfig(({ command }) => {
+  if (command === 'build') {
+    //代表生产环境的配置
+    console.log('生产环境')
+    return ({ ...viteBaseConfig, ...viteProdConfig })
+  }
+  else {
+    //代表开发环境的配置
+    console.log('开发环境')
+    return Object.assign({}, viteBaseConfig, viteDevConfig)
+  }
+})
+```
+
+### 策略模式写法
+```js
+import { defineConfig } from 'vite'
+import viteBaseConfig from './vite.base.config'
+import viteDevConfig from './vite.dev.config'
+import viteProdConfig from './vite.prod.config'
+
+const envResolver = {
+  "build": () => {
+    console.log("生产环境")
+    return ({ ...viteBaseConfig, ...viteProdConfig })
+  },
+  "serve": () => {
+    console.log("开发环境")
+    return Object.assign({}, viteBaseConfig, viteDevConfig)
+  }
+}
+
+export default defineConfig(({ command }) => {
+  console.log('command', command)
+  return envResolver[command]()
+})
+```
+</div>
+</div>
+<div v-click='3'>
+
+### 环境变量配置
+<div v-click='4'>
+
+> 环境变量: 会根据当前的代码环境产生值的变化的变量就叫做环境变量
+</div>
+<div v-click='5'>
+
+```html
+公司环境:1.本地2.开发3.测试4.预发5.生产
+```
+</div>
+<div v-click='6'>
+
+```js
+import { request } from 'umi';
+function login(body) {
+  return request(`${API_URL}/user/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+  });
+}
+```
+</div>
+<div v-click='7'>
+vite他在读取这个vite.config.js的时候会率先node去解析文件语法, 如果发现你是esmodule规范会直接将你的
+
+esmodule规范进行替换变成commonjs规范
+</div>
 
 
+<div v-click='8'>
 
-<!-- -->
+```js
+export default defineConfig(({ command, mode }) => {
+  console.log('command', command)
+  // console.log('process', process.env)
+  console.log('process', process.cwd())
+  //当前env文件所在的目录
+  // process.cwd()方法：返回 Node.js 进程当前工作的目录
+  //process.cwd()方法返回的是当前执行node命令时候的文件夹地址,不是被执行文件的地址，所以如果是在被执行文件的目录下执行node命令，那么两者是一样的。
+  //如果是在被执行文件的上一级目录下执行node命令，那么两者就不一样了。如果.env是在src目录下，第二个参数就写src/。
+  //第三个参数：env文件的名称，默认为.env，可以不写
+
+  const env = loadEnv(mode, process.cwd(), '')
+  console.log('env', env)
+  return envResolver[command]()
+})
+```
+```html
+.env: 所有环境都需要用到的环境变量
+.env.development: 开发环境需要用到的环境变量(默认情况下vite将我们的开发环境取名为development)
+.env.production: 生产环境需要用到的环境变量(默认情况下vite将我们的生产环境取名为production)
+
+yarn dev --mode development 会将mode设置为development传递进来
+```
+
+当我们调用loadenv的时候, 他会做如下几件事:
+1. 直接找到.env文件 并解析其中的环境变量并放进一个对象里
+2. 会将传进来的mode这个变量的值进行拼接: ```.env.development```,  并根据我们提供的目录去取对应的配置文件并进行解析, 并放进一个对象
+3. 我们可以理解为
+
+
+```js
+    const baseEnvConfig = 读取.env的配置
+    const modeEnvConfig = 读取env相关配置
+    const lastEnvConfig = { ...baseEnvConfig, ...modeEnvConfig }
+```
+   如果是客户端, vite会将对应的环境变量注入到import.meta.env里去
+
+vite做了一个拦截, 他为了防止我们将隐私性的变量直接送进import.meta.env中, 所以他做了一层拦截, 如果你的环境变量不是以VITE开头的, 他就不会帮你注入到客户端中去, 如果我们想要更改这个前缀, 可以去使用envPrefix配置
+</div>
+</div>
+</div>
+
+<!--
+1.不熟悉配置，在编辑器中获得语法提示，导入defineConfig。
+2.环境处理webpack有三个文件，同样的vite也可以类似的写法。我们创建三个文件，导入。
+3.配置环境，生产环境...深拷贝，开发环境浅拷贝，注意要写一个空对象，不然会修改第一个。
+4.command是build还是serve取决于生产环境还是开发环境。我们执行yarn dev  打印出来是开发环境。这里还有一种策略模式的写法，这种写法把之前的函数封装到这个对象里，符合就返回这个函数。
+5.环境变量: 会根据当前的代码环境产生值的变化的变量就叫做环境变量
+6.例子：开发的时候不同的地址。
+7.假设我们有两个文件，我希望开发的时候读dev地址，生产的时候读pro地址，看vite处理。利用dotenv这个第三方库，他会在你启动项目的时候找你根目录下面的.env文件。会自动读取.env文件并解析文件中的环境变量，他读的是一个字符串，因为在node端运行，利用js方法把等号分割，得到key 和 value，然后把key  value 组装成一个对象，并讲其注入到process对象（node端）下。但是vite考虑到和其他配置的一些冲突问题, 他不会直接注入到process对象下。涉及到vite.config.js配置root   envDir配置：用来配置当前环境变量的文件地址。就是默认会读.env，但是可以根据envDir来改变文件的地址。
+8.补充：vite.config.js是esmodule形式，node端是commonjs规范为什么可以在node端运行。
+9.因为我们先读了.env文件，然后返回的配置,但是配置文件里又可能返回了envDir。那么我们设置endDir没有意义。
+10.vite 提供了补偿措施，可以调用Vite 的loadEnv方法
+11.我们敲下yarn dev 方法 ，在test-vite目录下进行，这时候node的工作目录就是test—vite，  打印一下cwd。
+12.mode就是根据跑的命令来的 yarn dev，vite会把mode设置为development，相当于 yarn dev --mode development,这个development就会被vite传到mode
+-->
 
 ---
 layout: bullets
