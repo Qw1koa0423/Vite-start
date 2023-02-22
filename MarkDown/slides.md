@@ -238,7 +238,7 @@ const Vue = webpack_require("vue");
 </div>
 <div v-click='4'>
 
-> 依靠AST抽象语法工具，分析出你写的这个js文件有哪些导入和导出操作，由于前端没办法改文件，服务端跨域修改文件，构建工具运行在服务端，`yarn start`命令后会构建一个服务器，把你的文件改了，换成他自己的一套。
+> 依靠AST抽象语法工具，分析出你写的这个js文件有哪些导入和导出操作，由于前端没办法改文件，服务端可以修改文件，构建工具运行在服务端，`yarn start`命令后会构建一个服务器，把你的文件改了，换成他自己的一套。
 
 > 因为webpack支持多种模块化, 他一开始必须要统一模块化代码, 所以意味着他需要将所有的依赖全部读一遍。
 
@@ -371,7 +371,8 @@ import _ from 'lodash'
 //vite补全后=>
 import _ from '/node_modules/.vite/lodash'
 
-//找寻依赖的过程是自当前目录依次向上查找的过程, 直到搜寻到根目录或者搜寻到对应依赖为止，就是说当前目录下的node_modules有没有对应的依赖，没有的话就会找当前目录的父级目录一直找到根目录为止
+//找寻依赖的过程是自当前目录依次向上查找的过程, 直到搜寻到根目录或者搜寻到对应依赖为止
+// 就是说当前目录下的node_modules有没有对应的依赖，没有的话就会找当前目录的父级目录一直找到根目录为止*/
 
 import __vite__cjsImport1_lodash from "/node_modules/.vite/deps/lodash.js?v=e073fc78"
 
@@ -587,7 +588,10 @@ export default defineConfig(({ command, mode }) => {
 	
 	//loadEnv手动确认env文件。
   const env = loadEnv(mode, process.cwd(), '')
-	//process.cwd()方法返回的是当前执行node命令时候的文件夹地址,不是被执行文件的地址，所以如果是在被执行文件的目录下执行node命令，那么两者是一样的。如果是在被执行文件的上一级目录下执行node命令，那么两者就不一样了。如果.env是在src目录下，第二个参数就写src/。第三个参数：env文件的名称，默认为.env，可以不写
+	//process.cwd()方法返回的是当前执行node命令时候的文件夹地址,不是被执行文件的地址
+  //所以如果是在被执行文件的目录下执行node命令，那么两者是一样的。
+  //如果是在被执行文件的上一级目录下执行node命令，那么两者就不一样了。
+  //如果.env是在src目录下，第二个参数就写src/。第三个参数：env文件的名称，默认为.env，可以不写
   console.log('env', env)
   return envResolver[command]()
 })
@@ -602,7 +606,7 @@ yarn dev --mode development 会将mode设置为development传递进来
 
 当我们调用loadenv的时候, 他会做如下几件事:
 1. 直接找到.env文件 并解析其中的环境变量并放进一个对象里
-2. 会将传进来的mode这个变量的值进行拼接: `.env.【mode】`,  并根据我们提供的目录去取对应的配置文件并进行解析, 并放进一个对象
+2. 会将传进来的mode这个变量的值进行拼接: `.env.【mode】`, 并根据我们提供的目录去取对应的配置文件并进行解析, 并放进一个对象
 3. 我们可以理解为
 
 ```js
@@ -613,7 +617,8 @@ yarn dev --mode development 会将mode设置为development传递进来
 如果是客户端, vite会将对应的环境变量注入到import.meta.env里去
 ```js
 console.log('import.meta.env',import.meta.env)
-//vite做了一个拦截, 他为了防止我们将隐私性的变量直接送进import.meta.env中, 所以他做了一层拦截, 如果你的环境变量不是以VITE_开头的, 他就不会帮你注入到客户端中去, 如果我们想要更改这个前缀, 可以去使用envPrefix配置
+//vite做了一个拦截, 他为了防止我们将隐私性的变量直接送进import.meta.env中, 所以他做了一层拦截
+//如果你的环境变量不是以VITE_开头的, 他就不会帮你注入到客户端中去, 如果我们想要更改这个前缀, 可以去使用envPrefix配置
 ```
 </div>
 </div>
