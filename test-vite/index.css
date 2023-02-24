@@ -1,3 +1,6 @@
+:root {
+  --globalColor: rebeccapurple;
+}
 html,
 body {
   width: 100%;

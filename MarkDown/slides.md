@@ -637,7 +637,244 @@ layout: bullets
 
 ## vite中处理css，静态资源
 </div>
+<div class='overflow-y-scroll max-h-[425px] '>
+<div v-click='1'>
 
+### vite天生支持对css的直接处理
+</div>
+<div v-click='2'>
+
+```css
+/* index.css */
+html,
+body {
+  width: 100%;
+  height: 100%;
+  background: rebeccapurple;
+}
+```
+```javascript
+//main.js
+import './index.css'
+```
+</div>
+<div v-click=3>
+
+### 原理
+- vite在读取到main.js中引用到了index.css
+- 直接使用fs模块去读取index.css中文件内容
+- 直接创建一个style标签，将index.css中文件内容直接copy进style标签里
+- 将style标签插入到index.html的head中
+- 将该css文件中的内容直接替换为js脚本(方便热更新或者css模块化),同事设置content-type为js，从而让浏览器以js脚本的形式来执行该css后缀的文件。
+</div>
+<div v-click='4'>
+
+> 场景: 协同开发同类名
+```javascript
+//componentA.js
+import './componentA.css'
+const div = document.createElement('div')
+
+document.body.appendChild(div)
+
+div.className = 'footer'
+//componentB.js
+import './componentB.css'
+const div = document.createElement('div')
+
+document.body.appendChild(div)
+
+div.className = 'footer'
+//main.js
+import './componentA.js'
+import './componentB.js'
+```
+```css
+/* componentA.css */
+.footer {
+  width: 200px;
+  height: 100px;
+  background-color: lightblue;
+}
+/* componentB.css */
+.footer {
+  width: 100px;
+  height: 200px;
+  background-color: #000;
+}
+```
+</div>
+<div v-click='5'>
+
+### cssmodule
+- componentA.css=>componentA.module.css
+```javascript
+//componentA
+import componentAcss from './componentA.module.css'
+console.log("componentAcss",componentAcss)
+div.className = componentAcss.footer
+//componentB
+import componentBcss from './componentB.module.css'
+console.log("componentBcss",componentBcss)
+div.className = componentBcss.footer
+```
+</div>
+<div v-click='6'>
+
+>原理
+- 基于node
+ - module.css(module是一种约定，表示需要开启css模块化)
+ - 将所有类名进行一定规则的替换(补哈希值)
+ - 同时创建一个映射对象,将类名转换为key,替换后的为value {footer: "_footer_1huk0_1"}
+ - 将替换后的内容塞进style标签里放入head标签中
+ - 将componentA.module.css内容全部去除，替换成js脚本
+ - 将创建的映射对象在脚本中进行默认导出
+</div>
+<div v-click='7'>
+
+### less
+```less
+// componentA.module.less
+.content {
+  .main {
+    background: green;
+  }
+}
+```
+```javascript
+import componentAless from './componentA.module.less'
+console.log("componentAless", componentAless)
+```
+</div>
+<div v-click='8'>
+
+### vite.config.js中的css配置
+</div>
+<div v-click='9'>
+
+>在vite.config.js中通过css属性去控制整个vite对css的处理
+<div v-click='10'>
+
+- modules(对css模块化的配置)
+	- localsConvention:修改生成对象的key的展示形式(驼峰|中划线)
+	- scopeBehaviour:配置当前的模块化行为是模块化还是全局化
+	- generateScopedName:生成类名的规则(可以配置为函数，也可以配置成字符串规则:[](https://github.com/webpack/loader-utils#interpolatename))
+	- hashPrefix:生成更独特的hash(测试后没啥用好像)
+	- globalModulePaths://代表不想参与到css模块化的路径
+- preprocessorOptions(用来配置css预处理器的全局参数)
+- devSourcemap
+	- 文件之间的索引,假设我们的代码被压缩或者编译过了，这个时候如果程序出错，他将不会产生正确的错误位置信息，如果设置了sourceMap，他就会有一个索引文件map
+- postcss(保证css在执行起来是万无一失的)
+
+```javascript
+import { defineConfig } from 'vite'
+
+// const postcssPresetEnv = require('postcss-preset-env')
+
+export default defineConfig({
+  //对css行为进行配置
+  css: {
+    //对css模块化默认行为进行配置
+    //modules配置最终会丢给postcss modules
+    modules: {
+      //修改生成对象的key的展示形式(驼峰|中划线)
+      localsConvention: 'camelCaseOnly',
+      //配置当前的模块化行为是模块化还是全局化(有hash就是开启了模块化的一个标志，因为他可以产生不同的hash值来控制我们样式类名不被覆盖)
+      scopeBehaviour: 'local',
+      // /**
+      //  * @see https://github.com/webpack/loader-utils#interpolatename
+      //  */
+      // // generateScopedName: '[name]_[local]_[hash:5]',
+      // generateScopedName: (name, filename, css) => {
+      //   // 输出在node
+      //   // name=> 代表此时css文件的类名
+      //   // filename=> 代表此时css文件的路径
+      //   // css=>  代表此时css文件的内容
+      //   console.log('name', name, 'filename', filename, 'css', css)
+      //   //配置成函数以后，返回值决定了他最终显示的类型
+      //   return `${name}_${Math.random().toString(36).substring(3, 8)}`
+      // },
+      // 生成hash会根据你的类名 + 一些其他的字符串(文件名 + 他内部随机生成一个字符串)去进行生成, 如果你想要你生成hash更加的独特一点, 你可以配置hashPrefix, 你配置的这个字符串会参与到最终的hash生成, （hash: 只要你的字符串有一个字不一样, 那么生成的hash就完全不一样, 但是只要你的字符串完全一样, 生成的hash就会一样）
+      hashPrefix: "hello",
+      globalModulePaths: ['./componentB.module.css'] //代表不想参与到css模块化的路径
+    },
+    preprocessorOptions: {//key + config  key代表你想要使用的预处理器的名字, config代表你想要配置的内容
+      less: {//整个配置对象都会最终给到less的执行参数(全局参数)中去
+        math: 'always',
+        globalVars: {//全局变量
+          maincolor: 'red'
+        }
+      },
+    },
+    devSourcemap: true,//是否生成sourcemap(文件索引)
+    // postcss: {
+    //   plugins: [postcssPresetEnv()]
+    // },
+  }
+})
+```
+```javascript
+/**
+ * @see https://github.com/postcss/postcss
+ */
+
+const postcssPresetEnv = require('postcss-preset-env')
+module.exports = {
+  plugins: [postcssPresetEnv()]
+}
+```
+</div>
+<div v-click='10' class='hidden' >
+
+### vite对postcss有良好的支持
+#### postcss:保证css在执行起来是万无一失的
+- 我们写的css代码(怎么爽怎么来) --> postcss ---> less --> 再次对未来的高级css语法进行降级 --> 前缀补全 --> 浏览器客户端 
+#### babel:保证js执行起来万无一失
+- 我们写的js代码(怎么爽怎么来) --> babel --> 将最新的ts语法进行转换js语法 --> 做一次语法降级  --> 浏览器客户端去执行
+```javascript
+class App{ }//es6 写法
+function App(){ }//es3 写法
+```
+- less预处理器不能解决兼容性问题
+ - 对未来css属性使用降级问题
+ - 前缀补全: Google --webkit
+### 使用postcss
+- 安装依赖
+	- `yarn add postcss-cli postcss -D`
+	- `npx postcss index.css -o result.css`
+- 书写描述文件
+	- postcss.config.js
+目前来说 less和sass等一系列预处理器的postcss插件已经停止维护了 less插件 你自己去用less和sass编译完了, 然后你把编译结果给我
+
+**所以业内就产生了一个新的说法: postcss是后处理器** less的postcss的插件就ok了 
+</div>
+<div v-click='11'>
+
+### vite加载静态资源
+</div>
+<div v-click='12'>
+
+>什么是静态资源
+- 前端：图片,视频资源  放在本地的
+- 服务端：除了动态API之外，99%的资源都称为静态资源  
+	- API=>请求 /getUserInfo  服务器需要去处理的
+>vite 对静态资源开箱即用，除了svg
+```html
+目录结构
+- src
+	-assets
+		-images
+			-xxx.jpg
+	-imageLoader.js
+```
+
+</div>
+</div>
+
+
+
+</div>
+</div>
 <!-- -->
 
 ---
@@ -645,15 +882,12 @@ layout: bullets
 
 ---
 
-<img v-motion-pop-visible  src="/logo.png" style="zoom:10%;" />
-<div class='absolute  top-14  left-28'>
+<img v-motion-pop-visible src="/logo.png" style="zoom:10%;" />
+<div class='absolute top-14 left-28'>
 
 ## vite的插件以及常用插件的使用
 </div>
-<div v-click='1'>
 
-### vite天生支持对css的直接处理
-</div>
 
 
 <!-- -->
