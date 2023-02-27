@@ -1,0 +1,10 @@
+.content {
+  width: 200px;
+}
+.content .content-wrapper {
+  color: red;
+  padding: 50px / 2;
+  margin: 50px;
+  width: clamp(100px, 30%, 200px);
+  user-select: none;
+}

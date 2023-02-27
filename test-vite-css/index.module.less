@@ -1,0 +1,14 @@
+.content {
+  width: 200px;
+  .content-wrapper {
+    color: red;
+    padding: 50px / 2;
+    margin: (100px / 2);
+    // background-color: @maincolor;
+    //响应式布局,左侧一个菜单栏,宽度自适应根据屏幕30%
+    //200px 父容器
+    //200px * 0.3 = 60px ,最终宽度为100px;preset-env会进行语法降级
+    width: clamp(100px, 30%, 200px);
+    user-select: none;
+  }
+}
