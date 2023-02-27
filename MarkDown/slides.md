@@ -824,7 +824,7 @@ module.exports = {
 }
 ```
 </div>
-<div v-click='10' class='hidden' >
+<div class='hidden' >
 
 ### vite对postcss有良好的支持
 #### postcss:保证css在执行起来是万无一失的
@@ -848,7 +848,7 @@ function App(){ }//es3 写法
 
 **所以业内就产生了一个新的说法: postcss是后处理器** less的postcss的插件就ok了 
 </div>
-<div v-click='11'>
+<div v-click='10'>
 
 ### vite加载静态资源
 </div>
@@ -873,7 +873,7 @@ function App(){ }//es3 写法
 
 
 
-</div>
+</div> 
 </div>
 <!-- -->
 
