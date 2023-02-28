@@ -1088,7 +1088,7 @@ module.exports = ({
 
 ### vite常用插件之vite-plugin-html
 > vite-plugin-html可以帮我们动态的去控制生成html的内容
-
+[](https://github.com/vbenjs/vite-plugin-html)
 > webpack4 --> webpack-html-plugin / clean-webpack-plugin (clean:true)
 
 </div>
