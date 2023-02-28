@@ -1,5 +1,6 @@
 //如何加载动态资源
-import imgUrl from '@assets/images/1.jpg'
+// import imgUrl from '@assets/images/1.jpg'
+import imgUrl from '../src/assets/images/1.jpg'
 
 // raw 服务端会读取图片文件的内容  =》buffer  二进制的字符串  
 

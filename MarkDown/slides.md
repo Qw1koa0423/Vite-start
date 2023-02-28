@@ -450,7 +450,7 @@ layout: bullets
 
 ## vite的配置文件
 </div>
-<div class='overflow-y-scroll max-h-[425px] '>
+<div class='overflow-y-scroll max-h-[425px]'>
 <div v-click='1' >
 
 ### 语法提示
@@ -459,8 +459,8 @@ layout: bullets
 import { defineConfig } from 'vite'
 export default defineConfig({})
 ```
-</div>
 
+</div>
 <div v-click='2'>
 
 ### 环境处理
@@ -561,7 +561,8 @@ API_URL=http://alpha.api/
 <!-- .env.production -->
 API_URL=http://rc.api/
 
-dotenv第三方库：找.env文件，自动读取并解析对应环境变量，注入到process(node端)对象(但是vite考虑到和其他配置的一些冲突问题，不回直接注入到process对象下)。
+dotenv第三方库：找.env文件，自动读取并解析对应环境变量，注入到process(node端)对象
+(但是vite考虑到和其他配置的一些冲突问题，不回直接注入到process对象下)。
 涉及vite.config.js中一些变量：
 - root
 - envDir:用来配置当前环境变量的文件地址。
@@ -583,7 +584,7 @@ export default defineConfig(({ command, mode }) => {
   console.log('command', command)
   console.log('process', process.env)
 	// process.cwd()方法：返回 Node.js 进程当前工作的目录
-	
+
   console.log('process.cwd', process.cwd())
 	
 	//loadEnv手动确认env文件。
@@ -596,6 +597,7 @@ export default defineConfig(({ command, mode }) => {
   return envResolver[command]()
 })
 ```
+
 ```html
 .env: 所有环境都需要用到的环境变量
 .env.development: 开发环境需要用到的环境变量(默认情况下vite将我们的开发环境取名为development)
@@ -613,9 +615,7 @@ yarn dev --mode development 会将mode设置为development传递进来
     const baseEnvConfig = 读取.env的配置
     const modeEnvConfig = 读取env相关配置
     const lastEnvConfig = { ...baseEnvConfig, ...modeEnvConfig }
-```
-如果是客户端, vite会将对应的环境变量注入到import.meta.env里去
-```js
+//如果是客户端, vite会将对应的环境变量注入到import.meta.env里去
 console.log('import.meta.env',import.meta.env)
 //vite做了一个拦截, 他为了防止我们将隐私性的变量直接送进import.meta.env中, 所以他做了一层拦截
 //如果你的环境变量不是以VITE_开头的, 他就不会帮你注入到客户端中去, 如果我们想要更改这个前缀, 可以去使用envPrefix配置
@@ -637,7 +637,7 @@ layout: bullets
 
 ## vite中处理css，静态资源
 </div>
-<div class='overflow-y-scroll max-h-[425px] '>
+<div class='overflow-y-scroll max-h-[425px]'>
 <div v-click='1'>
 
 ### vite天生支持对css的直接处理
@@ -794,7 +794,9 @@ export default defineConfig({
       //   //配置成函数以后，返回值决定了他最终显示的类型
       //   return `${name}_${Math.random().toString(36).substring(3, 8)}`
       // },
-      // 生成hash会根据你的类名 + 一些其他的字符串(文件名 + 他内部随机生成一个字符串)去进行生成, 如果你想要你生成hash更加的独特一点, 你可以配置hashPrefix, 你配置的这个字符串会参与到最终的hash生成, （hash: 只要你的字符串有一个字不一样, 那么生成的hash就完全不一样, 但是只要你的字符串完全一样, 生成的hash就会一样）
+      // 生成hash会根据你的类名 + 一些其他的字符串(文件名 + 他内部随机生成一个字符串)去进行生成
+			//如果你想要你生成hash更加的独特一点, 你可以配置hashPrefix, 你配置的这个字符串会参与到最终的hash生成, 
+			//hash: 只要你的字符串有一个字不一样, 那么生成的hash就完全不一样, 但是只要你的字符串完全一样, 生成的hash就会一样
       hashPrefix: "hello",
       globalModulePaths: ['./componentB.module.css'] //代表不想参与到css模块化的路径
     },
@@ -858,7 +860,6 @@ function App(){ }//es3 写法
 - 前端：图片,视频资源  放在本地的
 - 服务端：除了动态API之外，99%的资源都称为静态资源  
 	- API=>请求 /getUserInfo  服务器需要去处理的
->vite 对静态资源开箱即用，除了svg
 ```html
 目录结构
 - src
@@ -869,11 +870,125 @@ function App(){ }//es3 写法
 ```
 
 </div>
+<div v-click='13'>
+
+```javascript
+//imageLoader.js
+import imgUrl from '../src/assets/images/1.jpg'
+// import imgUrl from '../src/assets/images/1.jpg?url'
+// import imgUrl from '../src/assets/images/1.jpg?raw'
+console.log('imgUrl', imgUrl)//拿到的是一个绝对路径
+// raw 服务端会读取图片文件的内容  =》buffer  二进制的字符串  
+//main.js
+import './src/imageLoader'
+```
+```json
+{
+  "name": "test-vite",
+  "version": "0.0.0"
+}
+```
+```javascript
+//main.js 
+ import jsonFile from './src/assets/json/index.json'
+ console.log('jsonFile', jsonFile, JSON.stringify(jsonFile))
+ //如果不用vite,在其他构建工具里json文件的导入会作为一个JSON字符串的形式存在
+ import { name } from './src/assets/json/index.json'
+ console.log('jsonFile', name)
+ //tree shaking 摇树优化:打包工具会自动帮你移除掉那些没有用到的变量或者方法
+```
 </div>
+<div v-click='13'>
 
+```html
+目录结构
+- src
+	- components
+		-baseComponents
+			-Button
+				-index.js
+```
+```javascript
+//Button/index.js
+import img1Url from '../../../assets/images/1.jpg'
+// vite.base.config.js
+import { defineConfig } from 'vite'
+import path from 'path'
+export default defineConfig({
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, './src'),
+      "@assets": path.resolve(__dirname, './src/assets'),
+    }
+    //原理：服务端读到@的时候，会去找到@对应的路径，然后把@替换成对应的路径
+  }
+})
+```
+</div>
+<div class='hidden' v-click='14'>
 
+### resolve.alias原理
+> 具体看vite-resolve-alias文件
 
-</div> 
+</div>
+<div v-click='14'>
+
+### vite处理svg资源
+>svg: scalable vector graphics 可伸缩矢量图形
+- svg不会失真
+- 尺寸小
+- 没法很好去表示层次丰富的图片信息
+- 更多用来做图标
+```javascript
+import svgIcon from './assets/svgs/pot.svg'
+import svgRaw from './assets/svgs/pot.svg?raw'
+console.log('svgIcon', svgRaw)
+// 第一种加载svg的方式
+const img = document.createElement('img')
+img.src = svgIcon
+document.body.appendChild(img)
+
+// 第二种加载svg的方式
+// document.body.innerHTML = svgRaw
+// const svgElement = document.getElementsByTagName('svg')[0]
+// svgElement.onmouseenter = function () {
+//   // svg的颜色是通过fill属性来控制的
+//   this.style.fill = 'red'
+// }
+```
+</div>
+<div v-click='15'>
+
+### vite在生产环境对静态资源的处理
+
+>当我们将工程进行打包之后，会发现找不到原来的资源
+- wbepack:baseUrl:'/'
+
+>打包之后的静态资源为什么要有hash
+- 浏览器有一个缓存机制  静态资源名字只 要不该，那么他就会之间用缓存的
+- 刷新页面: 请求的名字是不是同一个  读取缓存
+- hash算法:将一串字符经过运算得到一个新的乱码字符串
+- 利用好hash算法  可以让我们更换的控制浏览器缓存机制
+```javascript
+export default defineConfig({
+build: {//构建生产包的配置
+    rollupOptions: {//配置rollup的选项
+      /**
+       * @see https://www.rollupjs.com/guide/big-list-of-options#outputchunkfilenames
+       */
+      output: {//配置rollup输出的选项
+        //在rollup里，hash代表将你的文件名喝文件内容进行组合计得来的结果
+        assetFileNames: "[hash].[name].[ext]",
+      },
+    },
+    assetsInlineLimit: 4096000,//默认是4096，代表的是小于4kb的文件会被转换成base64的格式
+    outDir: "dist",//默认是dist  打包后的文件夹名字
+    assetsDir: "static",//默认是assets  静态资源文件夹
+  }
+	})
+```
+</div>
+</div>
 </div>
 <!-- -->
 
@@ -887,7 +1002,12 @@ layout: bullets
 
 ## vite的插件以及常用插件的使用
 </div>
+<div v-click='1'>
 
+### 插件是什么
+> vite 会在不同的生命周期的不同阶段中去调用不用的插件以达到不同的目的
+
+</div>
 
 
 <!-- -->
