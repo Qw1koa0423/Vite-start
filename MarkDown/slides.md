@@ -1002,15 +1002,100 @@ layout: bullets
 
 ## vite的插件以及常用插件的使用
 </div>
+<div class='overflow-y-scroll max-h-[425px]'>
 <div v-click='1'>
 
 ### 插件是什么
-> vite 会在不同的生命周期的不同阶段中去调用不用的插件以达到不同的目的
+> vite的插件会在不同的生命周期的不同阶段中去调用不用的插件以达到不同的目的
+</div>
+<div v-click='2'>
+
+### vite-aliases
+> vite-alias可以帮助我们自动生成别名: 检测你当前目录下包括src在内的所有文件夹，并帮助我们去生成别名
+> [](https://github.com/subwaytime/vite-aliases)
+</div>
+<div class='hidden'>
+
+### 手写vite-alias插件
+>[](https://cn.vitejs.dev/guide/api-plugin.html)
+
+> 我们去手写vite-aliases其实就是抢在vite执行配置之前去改写配置文件
+</div>
+<div class='hidden'>
+
+- 通过vite.config.js 返回出去的配置对象以及我们在插件的config生命周期中返回的对象都不是最终的配置对象
+- vite会把这几个配置对象进行合并
+```javascript
+
+// vite的插件必须返回给vite一个配置对象
+
+const fs = require('fs')
+const path = require('path')
+
+function diffDirAndFile (dirFilesArr = [], basePath = '') {
+  const result = {
+    dirs: [],
+    files: []
+  }
+
+  dirFilesArr.forEach(name => {
+    const currentFileStat = fs.statSync(path.resolve(__dirname, basePath + '/' + name))
+    const isDirectory = currentFileStat.isDirectory()
+    if (isDirectory) {
+      result.dirs.push(name)
+    } else {
+      result.files.push(name)
+    }
+  })
+  return result
+}
+
+function getTotalSrcDir (keyName) {
+  const result = fs.readdirSync(path.resolve(__dirname, '../src'))
+  const diffResult = diffDirAndFile(result, '../src')
+  const resolveAliasesObj = {} //放的就是一个一个别名配置 @assets：xxx
+  diffResult.dirs.forEach(dirName => {
+    const key = `${keyName}${dirName}`
+    const absPath = path.resolve(__dirname, `../src/${dirName}`)
+    console.log('key', key, absPath)
+    resolveAliasesObj[key] = absPath
+  })
+  return resolveAliasesObj
+}
+module.exports = ({
+  keyName = '@'
+} = {}) => {
+  return {
+    config (config, env) {
+      console.log('config', config, 'env', env)
+      //config:目前的一个配置对象
+      //env: mode:string,command:string
+      //config函数可以返回一个对象，这个对象是部分的viteconfig配置
+      const resolveAliasesObj = getTotalSrcDir(keyName)
+      console.log('resolveAliasesObj', resolveAliasesObj)
+      return {
+        //这里我们要返回一个resolve出去，将src目录下所有文件夹进行别名控制
+        resolve: {
+          alias: resolveAliasesObj
+        }
+      }
+    }
+  }
+}
+```
+</div>
+<div v-click='3'>
+
+### vite常用插件之vite-plugin-html
+> vite-plugin-html可以帮我们动态的去控制生成html的内容
+
+> webpack4 --> webpack-html-plugin / clean-webpack-plugin (clean:true)
 
 </div>
-
-
-<!-- -->
+</div>
+<!--
+ 生命周期: 其实就和我们人一样, vite从开始执行到执行结束, 那么着整个过程就是vite的生命周期
+ -->
 
 
 ---
