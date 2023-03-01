@@ -43,9 +43,6 @@ layout: bullets
 - vite 中处理 css、静态资源
 - vite 的插件以及常用插件的使用
 - vite 与 Ts 的结合
-- vite 生产打包
-- vite 构建 React 项目
-- vite 的构建原理
 </div>
 
 ---
@@ -1183,12 +1180,72 @@ layout: bullets
 ## vite于Ts结合
 
 </div>
+<div class='overflow-y-scroll max-h-[425px]'>
+<div v-click='1'>
 
+>TS:JS的类型检查工具，检查我们代码中可能存在的隐性问题 同时给我们一些语法提示
+</div>
+<div v-click='2'>
+
+```javascript
+//main.js
+console.log(123)
+```
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script src="./src/main.js" type="module"> </script>
+</body>
+
+</html>
+```
+</div>
+<div v-click='3'>
+
+```typescript
+//main.ts
+console.log('Hello from main.js')
+let str: string = 'Hello from main.ts'
+
+interface PersonFields {
+  name: string
+  age: number
+}
+function demo(params: PersonFields) {
+  console.log('name', params.name, 'age', params.age)
+}
+
+console.log(
+  str,
+  demo({
+    name: 'zhangsan',
+    age: 18,
+  })
+)
+
+```
+</div>
+<div v-click='4'>
+
+> 我们怎么让TS的错误直接输出到控制台
+[](https://github.com/fi3ework/vite-plugin-checker)
+
+</div>
+</div>
 <!-- -->
 
 
 ---
-layout: bullets
+layout: false
 
 ---
 
@@ -1196,28 +1253,79 @@ layout: bullets
 
 <div class='absolute  top-14  left-28'>
 
-## vite生产打包
+## vite性能优化
 
 </div>
+<div class='overflow-y-scroll max-h-[425px]'>
 
+<div v-click='1'>
+
+>我们平时在说的性能优化是什么东西？
+- 开发时态的构建速度优化:yarn dev/yarn start 敲下的瞬间到呈现结果要占用多少时长
+	- webpack在这方面下的功夫是很重的：cache-loader  如果两次构建源代码没有产生变化，则直接使用缓存 不调用loader   thread-loader  开启多线程构建
+	- vite 是按需加载不需要太关注这方面
+- 页面性能指标:和我们怎么写代码有关
+	- 首屏渲染时:fcp (first content paint)
+		- 懒加载: 需要我们写代码实现
+		- http优化: 协商缓存和强缓存
+			- 强缓存: 服务端给响应头追加一些字段(expires)客户端会记住这些字段,在expires(截止失效时间)没有到达之前,无论你怎么刷新页面,浏览器都不会重新请求页面,而是从缓存里取
+			- 协商缓存: 是否使用缓存要跟后端商量，当服务端给我们打上协商缓存的标记后，客户端在下次刷新页面需要重新请求资源时会发送一个协商请求到服务端，服务端如果说需要变化，则会响应具体的内容，如果服务端觉得没变化，则会响应304
+	- 页面中最大元素的一个时长:lcp (last content paint)
+	- ……
+- js逻辑:
+	- 副作用清除 组件的频繁挂载和卸载: 如果我们某个组件有计时器(setTimeOut),如果我们在卸载的时候不去清除这个定时器，下次再次挂载的时候计时器等于开了两个线程
+```javascript
+const [timer,setTimer] = useState(null);
+useEffect(()=>{
+	setTimer(	setTimeout(()=>{}));
+	return ()=>clearTimeout(timer);
+},[])
+```
+<div class='hidden'>
+
+- 在写法上注意事项：requestAnimationFrame,requestIdleCallback 卡浏览器帧率
+	- requestIdleCallback: 传一个函数进去
+	- 浏览器的帧率: 16.6ms 去更新一次 （执行js逻辑 以及重排重绘...） 假设我的js执行逻辑超过了16.6   就会掉帧
+	- concurrency  可中断渲染  react
+</div>
+
+- 防抖 节流 lodash js工具库 Array.prototype.forEach
+```javascript
+const arr=[];//几千条
+arr.forEach //不要用arr.forEach  lodash.forEach
+```
+- 对作用域的控制
+```javascript
+const arr = [1,2,3];
+for(let i = 0, len = arr.length; i < len; i ++){
+	
+}
+```
+- css
+	- 关注继承属性: 能继承的不要重复写
+	- 避免太过于深的嵌套
+
+- 构建优化: vite(rollup) webpack
+	- 优化体积: 压缩 treeshaking 图片资源压缩  cdn加载 分包
+</div>
+<div v-click='2'>
+
+### 分包策略
+##### 浏览器缓存策略
+
+##### 静态资源-->名字有无变化
+##### 业务代码会经常变化而我们的请求库不会，分包就是把不常改变的文件单独打包
+
+</div>
+<div v-click='3'>
+
+
+</div>
+</div>
 <!-- -->
 
 
----
-layout: bullets
-
----
-
-<img v-motion-pop-visible  src="/logo.png" style="zoom:10%;" />
-
-<div class='absolute  top-14  left-28'>
-
-## vite构建React项目
-
-</div>
-
-<!-- -->
-
+<div class='hidden'>
 
 ---
 layout: bullets
@@ -1347,3 +1455,5 @@ console.log('App.vue')
 </div>
 
 <!-- -->
+
+</div>
