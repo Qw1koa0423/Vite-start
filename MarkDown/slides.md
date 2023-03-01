@@ -1090,7 +1090,80 @@ module.exports = ({
 > vite-plugin-html可以帮我们动态的去控制生成html的内容
 [](https://github.com/vbenjs/vite-plugin-html)
 > webpack4 --> webpack-html-plugin / clean-webpack-plugin (clean:true)
+```javascript
+module.exports = (options) => {
+  /**
+   * @see  https://cn.vitejs.dev/guide/api-plugin.html#transformindexhtml
+   */
 
+  return {
+    // 转换html的
+    //将我们插件的一个执行时机提前
+    transformIndexHtml: (html, ctx) => {
+      enforce: 'pre',
+        // ctx 表示当前整个请求的一个执行上下文  
+        console.log('html', html)
+      return html.replace(/<%= title %>/g, options.inject.data.title)
+    }
+  }
+}
+```
+</div>
+<div v-click='4'>
+
+### vite常用插件之vite-plugin-mock
+[](https://github.com/vbenjs/vite-plugin-mock)
+- mock:模拟数据
+- 前后端并行开发开发
+- 1.简单方式:直接写死一两个数据  方便调试
+	- 缺陷
+		- 没法做海量数据测试
+		- 没法获得一些标准数据
+		- 没法感知http的异常
+- 2.mockjs:模拟海量数据的，vite-plugin-mock的依赖项就是mockjs
+```javascript
+const fs = require('fs')
+const path = require('path')
+module.exports = (options) => {
+  //做的最主要的就是拦截http请求
+  //当我们使用fetch或者axios请求数据的时候
+  //axios  baseURL 请求地址
+  //当给本地开发服务器的时候   viteserver服务器接管
+  return {
+    configureServer (server) {
+      //server  本地开发服务器相关配置
+      //server.middlewares  中间件
+      //req 请求相关信息
+      //res 响应相关信息
+      //next 是否交给下一个中间件 调用next方法会将处理结果交给下一个中间件
+      const mockStat = fs.statSync("mock")
+
+      const isDirectory = mockStat.isDirectory()
+      let mockResult = []
+      if (isDirectory) {
+        //process.cwd() 当前执行的根目录
+        mockResult = require(path.resolve(process.cwd(), 'mock/index.js'))
+        console.log('result', mockResult)
+      }
+      server.middlewares.use((req, res, next) => {
+        console.log('req', req.url,)
+        //看请求的地址在mockResult里面有没有
+        const matchItem = mockResult.find(mockDescriptor => mockDescriptor.url === mockDescriptor.url)
+        console.log('matchItem', matchItem)
+        if (req.url === '/api/users') {
+          console.log('进来了')
+          const responseData = matchItem.response(req)
+          //强制设置一下请求头格式为json格式
+          res.setHeader('Content-Type', 'application/json')
+          res.end(JSON.stringify(responseData))//设置请求头  异步的
+        } else {
+          next()
+        }
+      })
+    }
+  }
+}
+```
 </div>
 </div>
 <!--
