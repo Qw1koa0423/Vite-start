@@ -1,0 +1,11 @@
+//去配置一些ts的检查手段和检查规则
+{
+  "compilerOptions": {
+    "skipLibCheck": true, //是否跳过node_modules检查库文件
+    "module": "ESNext", //模块化规范
+    "types": [
+      "vite/client"
+    ],
+    "moduleResolution": "node", //模块解析策略
+  }
+}
