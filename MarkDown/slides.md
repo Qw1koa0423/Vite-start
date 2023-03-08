@@ -43,6 +43,7 @@ layout: bullets
 - vite 中处理 css、静态资源
 - vite 的插件以及常用插件的使用
 - vite 与 Ts 的结合
+- vite 性能优化
 </div>
 
 ---
@@ -171,6 +172,7 @@ const lodash = require("lodash"); // commonjs 规范
 - 优化开发体验: 
    - 构建工具会帮你自动监听文件的变化, 当文件变化以后自动帮你调用对应的集成工具进行重新打包, 然后再浏览器重新运行（整个过程叫做热更新, hot replacement）
    - 开发服务器: 跨域的问题, 用react-cli create-react-element vue-cli  解决跨域的问题
+
 </div>
 <div v-click='10' >
 
@@ -662,11 +664,14 @@ import './index.css'
 - 直接使用fs模块去读取index.css中文件内容
 - 直接创建一个style标签，将index.css中文件内容直接copy进style标签里
 - 将style标签插入到index.html的head中
-- 将该css文件中的内容直接替换为js脚本(方便热更新或者css模块化),同事设置content-type为js，从而让浏览器以js脚本的形式来执行该css后缀的文件。
+- 将该css文件中的内容直接替换为js脚本(方便热更新或者css模块化),同时设置content-type为js，从而让浏览器以js脚本的形式来执行该css后缀的文件。
 </div>
 <div v-click='4'>
 
 > 场景: 协同开发同类名
+</div>
+<div v-click='5'>
+
 ```javascript
 //componentA.js
 import './componentA.css'
@@ -701,33 +706,33 @@ import './componentB.js'
 }
 ```
 </div>
-<div v-click='5'>
 
-### cssmodule
-- componentA.css=>componentA.module.css
+<div v-click='6'>
+
+### cssmodule  (xxx.css=>xxx.module.css)
 ```javascript
-//componentA
+//componentA.js
 import componentAcss from './componentA.module.css'
 console.log("componentAcss",componentAcss)
 div.className = componentAcss.footer
-//componentB
+//componentB.js
 import componentBcss from './componentB.module.css'
 console.log("componentBcss",componentBcss)
 div.className = componentBcss.footer
 ```
 </div>
-<div v-click='6'>
-
->原理
-- 基于node
- - module.css(module是一种约定，表示需要开启css模块化)
- - 将所有类名进行一定规则的替换(补哈希值)
- - 同时创建一个映射对象,将类名转换为key,替换后的为value {footer: "_footer_1huk0_1"}
- - 将替换后的内容塞进style标签里放入head标签中
- - 将componentA.module.css内容全部去除，替换成js脚本
- - 将创建的映射对象在脚本中进行默认导出
-</div>
 <div v-click='7'>
+
+### 原理
+- 基于node
+	- module.css(module是一种约定，表示需要开启css模块化)
+	- 将所有类名进行一定规则的替换(补哈希值)
+	- 同时创建一个映射对象,将类名转换为key,替换后的为value {footer: "_footer_1huk0_1"}
+	- 将替换后的内容塞进style标签里放入head标签中
+	- 将componentA.module.css内容全部去除，替换成js脚本
+	- 将创建的映射对象在脚本中进行默认导出
+</div>
+<div v-click='8'>
 
 ### less
 ```less
@@ -743,13 +748,13 @@ import componentAless from './componentA.module.less'
 console.log("componentAless", componentAless)
 ```
 </div>
-<div v-click='8'>
+<div v-click='9'>
 
 ### vite.config.js中的css配置
 </div>
 <div v-click='9'>
 
->在vite.config.js中通过css属性去控制整个vite对css的处理
+> 在vite.config.js中通过css属性去控制整个vite对css的处理
 <div v-click='10'>
 
 - modules(对css模块化的配置)
@@ -791,10 +796,8 @@ export default defineConfig({
       //   //配置成函数以后，返回值决定了他最终显示的类型
       //   return `${name}_${Math.random().toString(36).substring(3, 8)}`
       // },
-      // 生成hash会根据你的类名 + 一些其他的字符串(文件名 + 他内部随机生成一个字符串)去进行生成
-			//如果你想要你生成hash更加的独特一点, 你可以配置hashPrefix, 你配置的这个字符串会参与到最终的hash生成, 
-			//hash: 只要你的字符串有一个字不一样, 那么生成的hash就完全不一样, 但是只要你的字符串完全一样, 生成的hash就会一样
-      hashPrefix: "hello",
+    
+     
       globalModulePaths: ['./componentB.module.css'] //代表不想参与到css模块化的路径
     },
     preprocessorOptions: {//key + config  key代表你想要使用的预处理器的名字, config代表你想要配置的内容
@@ -843,7 +846,7 @@ function App(){ }//es3 写法
 	- `npx postcss index.css -o result.css`
 - 书写描述文件
 	- postcss.config.js
-目前来说 less和sass等一系列预处理器的postcss插件已经停止维护了 less插件 你自己去用less和sass编译完了, 然后你把编译结果给我
+	目前来说 less和sass等一系列预处理器的postcss插件已经停止维护了 less插件 你自己去用less和sass编译完了, 然后你把编译结果给我
 
 **所以业内就产生了一个新的说法: postcss是后处理器** less的postcss的插件就ok了 
 </div>
@@ -1249,6 +1252,7 @@ layout: false
 
 ---
 
+<div class='hidden'>
 <img v-motion-pop-visible  src="/logo.png" style="zoom:10%;" />
 
 <div class='absolute  top-14  left-28'>
@@ -1322,16 +1326,17 @@ for(let i = 0, len = arr.length; i < len; i ++){
 
 </div>
 </div>
+</div>
 <!-- -->
 
 
-<div class='hidden'>
 
 ---
 layout: bullets
 
 ---
 
+<div class='hidden'>
 <img v-motion-pop-visible  src="/logo.png" style="zoom:10%;" />
 <div class='absolute  top-14  left-28'>
 
@@ -1454,6 +1459,5 @@ console.log('App.vue')
 
 </div>
 
-<!-- -->
-
 </div>
+<!-- -->
