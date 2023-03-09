@@ -1,8 +1,8 @@
-const path = require('path')
-module.exports = {
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, './src')
-    }
-  }
-}
+// vite.config.js
+import { ViteAliases } from 'vite-aliases'
+import { defineConfig } from 'vite'
+export default defineConfig({
+  plugins: [
+    ViteAliases()
+  ]
+}) 

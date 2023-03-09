@@ -857,7 +857,7 @@ function App(){ }//es3 写法
 > 什么是静态资源
 - 前端：图片,视频资源  放在本地的
 - 服务端：除了动态API之外，99%的资源都称为静态资源  
-	- API=>请求 /getUserInfo  服务器需要去处理的
+	- API——>请求 /getUserInfo  服务器需要去处理的
 ```html
 目录结构
 - src
@@ -873,12 +873,29 @@ function App(){ }//es3 写法
 ```javascript
 //imageLoader.js
 import imgUrl from '../src/assets/images/1.jpg'
-// import imgUrl from '../src/assets/images/1.jpg?url'
-// import imgUrl from '../src/assets/images/1.jpg?raw'
-console.log('imgUrl', imgUrl)//拿到的是一个绝对路径
+// import imgUrl from '@assets/images/1.jpg'
+
 // raw 服务端会读取图片文件的内容  =》buffer  二进制的字符串  
-//main.js
+
+
+console.log('imgUrl', imgUrl)//拿到的是一个绝对路径
+const img = document.createElement('img')
+img.src = imgUrl
+document.body.appendChild(img)
+//main.js 
 import './src/imageLoader'
+import { name } from './src/assets/json/index.json'
+import './src/components/baseComponents/Button/index'
+import './src/svgLoader'
+import jsonFile from './src/assets/json/index.json'
+import './src/components/baseComponents/Button/index'
+//如果不用vite,在其他构建工具里json文件的导入会作为一个JSON字符串的形式存在
+console.log('jsonFile', jsonFile, JSON.stringify(jsonFile))
+
+//tree shaking 摇树优化:打包工具会自动帮你移除掉那些没有用到的变量或者方法
+console.log('jsonFile', jsonFile.name)
+console.log('jsonFile', name)
+
 ```
 ```json
 {
@@ -886,21 +903,16 @@ import './src/imageLoader'
   "version": "0.0.0"
 }
 ```
-```javascript
-//main.js 
- import jsonFile from './src/assets/json/index.json'
- console.log('jsonFile', jsonFile, JSON.stringify(jsonFile))
- //如果不用vite,在其他构建工具里json文件的导入会作为一个JSON字符串的形式存在
- import { name } from './src/assets/json/index.json'
- console.log('jsonFile', name)
- //tree shaking 摇树优化:打包工具会自动帮你移除掉那些没有用到的变量或者方法
-```
+
 </div>
 <div v-click='13'>
 
 ```html
 目录结构
 - src
+	-assets
+		-images
+			-1.jpg
 	- components
 		-baseComponents
 			-Button
@@ -940,7 +952,9 @@ export default defineConfig({
 ```javascript
 import svgIcon from './assets/svgs/pot.svg'
 import svgRaw from './assets/svgs/pot.svg?raw'
-console.log('svgIcon', svgRaw)
+console.log('svgIcon', svgIcon)
+console.log('svgRaw', svgRaw)
+
 // 第一种加载svg的方式
 const img = document.createElement('img')
 img.src = svgIcon
@@ -950,8 +964,8 @@ document.body.appendChild(img)
 // document.body.innerHTML = svgRaw
 // const svgElement = document.getElementsByTagName('svg')[0]
 // svgElement.onmouseenter = function () {
-//   // svg的颜色是通过fill属性来控制的
-//   this.style.fill = 'red'
+// // svg的颜色是通过fill属性来控制的
+//     this.style.fill = 'red'
 // }
 ```
 </div>
@@ -959,10 +973,7 @@ document.body.appendChild(img)
 
 ### vite在生产环境对静态资源的处理
 
->当我们将工程进行打包之后，会发现找不到原来的资源
-- wbepack:baseUrl:'/'
-
->打包之后的静态资源为什么要有hash
+> 打包之后的静态资源为什么要有hash
 - 浏览器有一个缓存机制  静态资源名字只 要不该，那么他就会之间用缓存的
 - 刷新页面: 请求的名字是不是同一个  读取缓存
 - hash算法:将一串字符经过运算得到一个新的乱码字符串
@@ -1087,7 +1098,6 @@ module.exports = ({
 ### vite常用插件之vite-plugin-html
 > vite-plugin-html可以帮我们动态的去控制生成html的内容
 [链接](https://github.com/vbenjs/vite-plugin-html)
-> webpack4 --> webpack-html-plugin / clean-webpack-plugin (clean:true)
 ```javascript
 module.exports = (options) => {
   /**
@@ -1097,9 +1107,8 @@ module.exports = (options) => {
   return {
     // 转换html的
     //将我们插件的一个执行时机提前
-    transformIndexHtml: (html, ctx) => {
+    transformIndexHtml: (html) => {
       enforce: 'pre',
-        // ctx 表示当前整个请求的一个执行上下文  
         console.log('html', html)
       return html.replace(/<%= title %>/g, options.inject.data.title)
     }
@@ -1119,6 +1128,43 @@ module.exports = (options) => {
 		- 没法获得一些标准数据
 		- 没法感知http的异常
 - 2.mockjs:模拟海量数据的，vite-plugin-mock的依赖项就是mockjs
+```javascript
+const mockJs = require('mockjs')
+
+// const userList = [
+//   {
+//     name: '张三',
+//     age: 18,
+//     id: 1,
+//     createTime: '2021-01-01 12:00:00',
+//     avatar: 'https://img2.baidu.com/it/u=1609812019.jpg'
+//   }
+// ]
+
+const userList = mockJs.mock({
+  "data|100": [{
+    name: '@cname', //中文名称
+    ename: "@first", //英文名称
+    "id|+1": 1,//数字从当前数开始后续依次加一
+    avatar: '@image(200x200,@ename)', //生成图片
+    createTime: '@datetime', //生成时间
+  }]
+})
+
+module.exports = [{
+  method: "post",
+  url: "/api/users",
+  response: ({ body }) => {
+    //body 请求体
+    //page  pageSize body
+    return {
+      code: 200,
+      msg: 'success',
+      data: userList
+    }
+  }
+}]
+```
 <div class='hidden'>
 
 ```javascript
@@ -1238,12 +1284,36 @@ console.log(
 )
 
 ```
+```json
+//去配置一些ts的检查手段和检查规则
+{
+  "compilerOptions": {
+    "skipLibCheck": true, //是否跳过node_modules检查库文件
+    "module": "ESNext", //模块化规范
+    "types": [
+      "vite/client"
+    ],
+    "moduleResolution": "node", //模块解析策略
+  }
+}
+```
 </div>
 <div v-click='4'>
 
 > 我们怎么让TS的错误直接输出到控制台
 [链接](https://github.com/fi3ework/vite-plugin-checker)
+```typescript
+import { defineConfig } from 'vite'
+import checker from 'vite-plugin-checker'
+export default defineConfig({
+  plugins: [
+    checker({
+      typescript: true,
+    }),
+  ],
+})
 
+```
 </div>
 </div>
 <!-- -->

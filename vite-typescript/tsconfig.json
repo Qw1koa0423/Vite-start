@@ -2,7 +2,7 @@
 {
   "compilerOptions": {
     "skipLibCheck": true, //是否跳过node_modules检查库文件
-    "module": "ESNext", //模块化规范
+    "module": "esnext", //模块化规范
     "types": [
       "vite/client"
     ],

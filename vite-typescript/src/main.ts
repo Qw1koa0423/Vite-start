@@ -1,4 +1,3 @@
-console.log('Hello from main.js')
 let str: string = 'Hello from main.ts'
 
 // str = 123
@@ -7,8 +6,10 @@ interface PersonFields {
   age: number
 }
 function demo(params: PersonFields) {
-  
-  console.log('name', params.name, 'age', params.age)
+  return {
+    name: params.name,
+    age: params.age,
+  }
 }
 
 console.log(

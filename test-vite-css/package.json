@@ -7,10 +7,6 @@
     "dev": "vite",
     "build": "vite build"
   },
-  "dependencies": {
-    "lodash": "^4.17.21",
-    "lodash-es": "^4.17.21"
-  },
   "devDependencies": {
     "postcss-preset-env": "^8.0.1",
     "less": "^4.1.3",
