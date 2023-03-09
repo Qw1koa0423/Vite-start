@@ -7,6 +7,7 @@ interface PersonFields {
   age: number
 }
 function demo(params: PersonFields) {
+  
   console.log('name', params.name, 'age', params.age)
 }
 

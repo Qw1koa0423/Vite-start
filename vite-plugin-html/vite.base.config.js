@@ -1,20 +1,11 @@
 import { defineConfig } from 'vite'
-// import { createHtmlPlugin } from 'vite-plugin-html'
-import MyHtmlPlugins from './plugins/CreateHtmlPlugins'
+import { createHtmlPlugin } from 'vite-plugin-html'
 export default defineConfig({
-
   plugins: [
-    // createHtmlPlugin({
-    //   inject: {
-    //     data: {
-    //       title: '首页',
-    //     }
-    //   }
-    // })
-    MyHtmlPlugins({
+    createHtmlPlugin({
       inject: {
         data: {
-          title: '主页',
+          title: '首页',
         }
       }
     })

@@ -43,7 +43,6 @@ layout: bullets
 - vite 中处理 css、静态资源
 - vite 的插件以及常用插件的使用
 - vite 与 Ts 的结合
-- vite 性能优化
 </div>
 
 ---
@@ -760,9 +759,8 @@ console.log("componentAless", componentAless)
 - modules(对css模块化的配置)
 	- localsConvention:修改生成对象的key的展示形式(驼峰|中划线)
 	- scopeBehaviour:配置当前的模块化行为是模块化还是全局化
-	- generateScopedName:生成类名的规则(可以配置为函数，也可以配置成字符串规则:[](https://github.com/webpack/loader-utils#interpolatename))
-	- hashPrefix:生成更独特的hash(测试后没啥用好像)
-	- globalModulePaths://代表不想参与到css模块化的路径
+	- generateScopedName:生成类名的规则(可以配置为函数，也可以配置成字符串规则:[链接](https://github.com/webpack/loader-utils#interpolatename)
+	- globalModulePaths:代表不想参与到css模块化的路径
 - preprocessorOptions(用来配置css预处理器的全局参数)
 - devSourcemap
 	- 文件之间的索引,假设我们的代码被压缩或者编译过了，这个时候如果程序出错，他将不会产生正确的错误位置信息，如果设置了sourceMap，他就会有一个索引文件map
@@ -771,7 +769,7 @@ console.log("componentAless", componentAless)
 ```javascript
 import { defineConfig } from 'vite'
 
-// const postcssPresetEnv = require('postcss-preset-env')
+const postcssPresetEnv = require('postcss-preset-env')
 
 export default defineConfig({
   //对css行为进行配置
@@ -783,25 +781,25 @@ export default defineConfig({
       localsConvention: 'camelCaseOnly',
       //配置当前的模块化行为是模块化还是全局化(有hash就是开启了模块化的一个标志，因为他可以产生不同的hash值来控制我们样式类名不被覆盖)
       scopeBehaviour: 'local',
-      // /**
-      //  * @see https://github.com/webpack/loader-utils#interpolatename
-      //  */
-      // // generateScopedName: '[name]_[local]_[hash:5]',
-      // generateScopedName: (name, filename, css) => {
-      //   // 输出在node
-      //   // name=> 代表此时css文件的类名
-      //   // filename=> 代表此时css文件的路径
-      //   // css=>  代表此时css文件的内容
-      //   console.log('name', name, 'filename', filename, 'css', css)
-      //   //配置成函数以后，返回值决定了他最终显示的类型
-      //   return `${name}_${Math.random().toString(36).substring(3, 8)}`
-      // },
-    
-     
+      /**
+       * @see https://github.com/webpack/loader-utils#interpolatename
+       */
+      generateScopedName: '[name]_[local]_[hash:5]',
+      generateScopedName: (name, filename, css) => {
+        // 输出在node
+        // name=> 代表此时css文件的类名
+        // filename=> 代表此时css文件的路径
+        // css=>  代表此时css文件的内容
+        console.log('name', name, 'filename', filename, 'css', css)
+        //配置成函数以后，返回值决定了他最终显示的类型
+        return `${name}_${Math.random().toString(36).substring(3, 8)}`
+      },
       globalModulePaths: ['./componentB.module.css'] //代表不想参与到css模块化的路径
     },
-    preprocessorOptions: {//key + config  key代表你想要使用的预处理器的名字, config代表你想要配置的内容
-      less: {//整个配置对象都会最终给到less的执行参数(全局参数)中去
+    preprocessorOptions: {
+      //key + config  key代表你想要使用的预处理器的名字, config代表你想要配置的内容
+      less: {
+        //整个配置对象都会最终给到less的执行参数(全局参数)中去
         math: 'always',
         globalVars: {//全局变量
           maincolor: 'red'
@@ -809,9 +807,9 @@ export default defineConfig({
       },
     },
     devSourcemap: true,//是否生成sourcemap(文件索引)
-    // postcss: {
-    //   plugins: [postcssPresetEnv()]
-    // },
+    postcss: {
+      plugins: [postcssPresetEnv()]
+    },
   }
 })
 ```
@@ -854,9 +852,9 @@ function App(){ }//es3 写法
 
 ### vite加载静态资源
 </div>
-<div v-click='12'>
+<div v-click='11'>
 
->什么是静态资源
+> 什么是静态资源
 - 前端：图片,视频资源  放在本地的
 - 服务端：除了动态API之外，99%的资源都称为静态资源  
 	- API=>请求 /getUserInfo  服务器需要去处理的
@@ -870,7 +868,7 @@ function App(){ }//es3 写法
 ```
 
 </div>
-<div v-click='13'>
+<div v-click='12'>
 
 ```javascript
 //imageLoader.js
@@ -1012,12 +1010,12 @@ layout: bullets
 
 ### vite-aliases
 > vite-alias可以帮助我们自动生成别名: 检测你当前目录下包括src在内的所有文件夹，并帮助我们去生成别名
-> [](https://github.com/subwaytime/vite-aliases)
+> [链接](https://github.com/subwaytime/vite-aliases)
 </div>
 <div class='hidden'>
 
 ### 手写vite-alias插件
->[](https://cn.vitejs.dev/guide/api-plugin.html)
+>[链接](https://cn.vitejs.dev/guide/api-plugin.html)
 
 > 我们去手写vite-aliases其实就是抢在vite执行配置之前去改写配置文件
 </div>
@@ -1088,7 +1086,7 @@ module.exports = ({
 
 ### vite常用插件之vite-plugin-html
 > vite-plugin-html可以帮我们动态的去控制生成html的内容
-[](https://github.com/vbenjs/vite-plugin-html)
+[链接](https://github.com/vbenjs/vite-plugin-html)
 > webpack4 --> webpack-html-plugin / clean-webpack-plugin (clean:true)
 ```javascript
 module.exports = (options) => {
@@ -1112,7 +1110,7 @@ module.exports = (options) => {
 <div v-click='4'>
 
 ### vite常用插件之vite-plugin-mock
-[](https://github.com/vbenjs/vite-plugin-mock)
+[链接](https://github.com/vbenjs/vite-plugin-mock)
 - mock:模拟数据
 - 前后端并行开发开发
 - 1.简单方式:直接写死一两个数据  方便调试
@@ -1121,6 +1119,8 @@ module.exports = (options) => {
 		- 没法获得一些标准数据
 		- 没法感知http的异常
 - 2.mockjs:模拟海量数据的，vite-plugin-mock的依赖项就是mockjs
+<div class='hidden'>
+
 ```javascript
 const fs = require('fs')
 const path = require('path')
@@ -1128,7 +1128,7 @@ module.exports = (options) => {
   //做的最主要的就是拦截http请求
   //当我们使用fetch或者axios请求数据的时候
   //axios  baseURL 请求地址
-  //当给本地开发服务器的时候   viteserver服务器接管
+  //当给本地开发服务器的时候   vite server服务器接管
   return {
     configureServer (server) {
       //server  本地开发服务器相关配置
@@ -1137,7 +1137,6 @@ module.exports = (options) => {
       //res 响应相关信息
       //next 是否交给下一个中间件 调用next方法会将处理结果交给下一个中间件
       const mockStat = fs.statSync("mock")
-
       const isDirectory = mockStat.isDirectory()
       let mockResult = []
       if (isDirectory) {
@@ -1165,6 +1164,9 @@ module.exports = (options) => {
 }
 ```
 </div>
+
+
+</div>
 </div>
 <!--
  生命周期: 其实就和我们人一样, vite从开始执行到执行结束, 那么着整个过程就是vite的生命周期
@@ -1186,7 +1188,7 @@ layout: bullets
 <div class='overflow-y-scroll max-h-[425px]'>
 <div v-click='1'>
 
->TS:JS的类型检查工具，检查我们代码中可能存在的隐性问题 同时给我们一些语法提示
+> TS:JS的类型检查工具，检查我们代码中可能存在的隐性问题 同时给我们一些语法提示
 </div>
 <div v-click='2'>
 
@@ -1240,7 +1242,7 @@ console.log(
 <div v-click='4'>
 
 > 我们怎么让TS的错误直接输出到控制台
-[](https://github.com/fi3ework/vite-plugin-checker)
+[链接](https://github.com/fi3ework/vite-plugin-checker)
 
 </div>
 </div>

@@ -1,10 +1,8 @@
 import { defineConfig } from 'vite'
-// import { viteMockServe } from 'vite-plugin-mock'
-import VitePluginMock from './plugins/VitePluginMock'
+import { viteMockServe } from 'vite-plugin-mock'
 export default defineConfig({
 
   plugins: [
-    // viteMockServe()
-    VitePluginMock()
+    viteMockServe()
   ],
 })
